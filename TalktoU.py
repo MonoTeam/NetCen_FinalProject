@@ -15,7 +15,7 @@ class mySocket:
         self.status()
         self.friend = self.s.recv(4096).decode().split('\n')
         self.printfriend()
-
+        self.ThreadStart()
     
     def authen(self):
         Userid = '5809680092'
@@ -29,9 +29,9 @@ class mySocket:
     def status(self):
         status = self.s.recv(4096).decode().strip(" \n")
         if status == '200 SUCCESS':
-            print('Authentication Successed')
+            print('Authentication Successed\n')
         else:
-            print('Authentication Denied')
+            print('Authentication Denied\n')
             sys.exit(-1)
 
     def Sending(self,msg):
@@ -48,8 +48,9 @@ class mySocket:
                 else:
                     print(result + 'online)\n')
 
-    
-
+    def ThreadStart(self):
+        threading.Thread(target = self.heartbeat).start()
+        threading.Thread(target = self.listen).start()
 
 #starting point
 Starto = mySocket('128.199.83.36',34260)
