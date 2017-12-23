@@ -51,6 +51,16 @@ class mySocket:
             else:
                 client_socket.send(bytes(Userinput,'utf-8'))
 
+    def conn(self):       
+        
+        conn = conn.split(":")
+        if len(conn) == 3 and conn[0] == 'connect':
+            T = threading.Thread(target=handle_client, args=(conn[1],conn[2]))
+            T.daemon = True
+            T.start()
+        else:
+            print("Wrong input")
+
     def recv_client(self,client_socket,client_address):
             while 1:
                 data = self.s.recv(4096).decode()
@@ -68,6 +78,7 @@ class mySocket:
         while 1:
             if self.s.recv(4096).decode() == "Hello " + self.Userid :
                 self.Sending("Hello Server")
+                print("IVSTNOVKA")
     
     def authen(self):
         self.Userid = '5809680092'
@@ -102,8 +113,8 @@ class mySocket:
 
     def ThreadStart(self,host,port):
         threading.Thread(target = self.heartandauthen(host,port)).start()
+        threading.Thread(target = self.conn).start()
         threading.Thread(target = self.listen).start()
-        # threading.Thread(target = self.conn).start()
 
 #starting point
 Starto = mySocket('128.199.83.36',34260)
