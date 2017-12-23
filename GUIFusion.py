@@ -112,7 +112,6 @@ class TalktoUIMain(Frame):
             }
             Chatter = ChatUI(datagram)
 
- 	
     def beat(self):
         while 1:
             sendmsg = "Hello " + self.UsernameInput.get()
@@ -138,12 +137,14 @@ class TalktoUIMain(Frame):
 
 class ChatUI():
     def __init__(self,datagram):
+
         self.base = Tk()
         self.base.title("bra bra")
         self.datagram = datagram
         self.soc  = datagram['consoc']
         self.port = datagram['port']
         self.base.geometry("400x500")
+        threading.Thread(target=self.recieveMessage,args=(self.soc,self.port)).start()
         self.base.resizable(width=FALSE, height=FALSE)
 
         self.ChatLog = Text(self.base, bd=0, bg="white", height="8", width="40", font="Arial",)
@@ -157,15 +158,10 @@ class ChatUI():
         self.SendButton = Button(self.base, font=30, text="Send", width="12", height=5,
                     bd=0, bg="#FFBF00", activebackground="#FACC2E",command=self.Send)
         
-
-
         self.scrollbar.place(x=376,y=6, height=386)
         self.ChatLog.place(x=6,y=6, height=386, width=370)
         self.EntryBox.place(x=145, y=401, height=90, width=265)
         self.SendButton.place(x=6, y=401, height=90)
-
-
-        threading.Thread(target=self.recieveMessage,args=(self.soc,self.port))
         
         self.base.mainloop()
     
@@ -178,7 +174,7 @@ class ChatUI():
         if msg != "":
             self.EntryBox.delete(0, 'end')
             self.ChatLog.config(state=NORMAL)
-            self.ChatLog.insert('end','You : ' + msg, ('send'))
+            self.ChatLog.insert('end','You : ' + msg)
             self.ChatLog.config(state=DISABLED)
             self.ChatLog.see(END)
 
@@ -186,13 +182,14 @@ class ChatUI():
         while True:
             try:
                 recv_msg = sock.recv(4096).decode()
+                print(recv_msg)
             except UnicodeDecodeError:
                 raise UnicodeDecodeError
             except TypeError:
                 raise TypeError
 
             self.ChatLog.config(state=NORMAL)
-            self.ChatLog.insert('end',"friend : " + recv_msg, ('recieve'))
+            self.ChatLog.insert('end',"friend : " + recv_msg + "\n")
             self.ChatLog.config(state=DISABLED)
             self.ChatLog.see(END)
             
