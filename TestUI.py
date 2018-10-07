@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import *
 from tkinter import messagebox 
 class ChatUI():
     def __init__(self):
